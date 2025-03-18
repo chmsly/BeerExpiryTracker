@@ -1,0 +1,3 @@
+rootProject.name = 'beer-expiry-tracker'
+include 'backend'
+include 'frontend' 
