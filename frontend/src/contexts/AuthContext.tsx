@@ -1,100 +1,119 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import authService from '../services/auth.service';
-import { UserData } from '../services/auth.service';
+'use client';
 
-interface AuthContextType {
-  user: UserData | null;
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import authService, { UserData } from '@/services/auth.service';
+
+// Define the context type
+export interface AuthContextType {
+  isAuthenticated: boolean;
   loading: boolean;
+  currentUser: UserData | null;
   login: (username: string, password: string) => Promise<boolean>;
   register: (username: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  isAuthenticated: boolean;
+  updateUser: (userData: UserData) => Promise<boolean>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+// Create the context with a default empty value
+const AuthContext = createContext<AuthContextType>({
+  isAuthenticated: false,
+  loading: true,
+  currentUser: null,
+  login: async () => false,
+  register: async () => false,
+  logout: () => {},
+  updateUser: async () => false,
+});
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+// Custom hook to use the auth context
+export const useAuth = () => useContext(AuthContext);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Provider component
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<UserData | null>(null);
-  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+  const router = useRouter();
 
+  // Check if user is authenticated on initial load
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const currentUser = authService.getCurrentUser();
-        if (currentUser && authService.isAuthenticated()) {
-          setUser(currentUser);
-          setIsAuthenticated(true);
-        }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
-        // Clear any invalid auth state
-        authService.logout();
-      } finally {
-        setLoading(false);
+    const checkAuth = () => {
+      const user = authService.getCurrentUser();
+      if (user) {
+        setIsAuthenticated(true);
+        setCurrentUser(user);
       }
+      setLoading(false);
     };
 
-    initAuth();
+    checkAuth();
   }, []);
 
+  // Login function
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
-      setLoading(true);
-      const success = await authService.login({ username, password });
-      if (success) {
-        const userData = authService.getCurrentUser();
-        setUser(userData);
-        setIsAuthenticated(true);
-        return true;
-      }
-      return false;
+      const response = await authService.login({ username, password });
+      setIsAuthenticated(true);
+      setCurrentUser(authService.getCurrentUser());
+      return true;
     } catch (error) {
       console.error('Login error:', error);
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
+  // Register function
   const register = async (username: string, email: string, password: string): Promise<boolean> => {
     try {
-      setLoading(true);
-      const success = await authService.register({ username, email, password });
-      return success;
+      const response = await authService.register({ username, email, password });
+      return response;
     } catch (error) {
       console.error('Registration error:', error);
       return false;
-    } finally {
-      setLoading(false);
     }
   };
 
+  // Logout function
   const logout = () => {
     authService.logout();
-    setUser(null);
     setIsAuthenticated(false);
+    setCurrentUser(null);
+    router.push('/auth/login');
+  };
+
+  // Update user function
+  const updateUser = async (userData: UserData): Promise<boolean> => {
+    try {
+      // In a real app, you would call an API to update the user
+      // For now, we'll just update the local state
+      setCurrentUser(userData);
+      
+      // Update the user in local storage
+      const token = localStorage.getItem('token');
+      if (token) {
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Update user error:', error);
+      return false;
+    }
   };
 
   const value = {
-    user,
+    isAuthenticated,
     loading,
+    currentUser,
     login,
     register,
     logout,
-    isAuthenticated,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
