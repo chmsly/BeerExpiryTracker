@@ -94,6 +94,18 @@ export default function Navbar() {
                     </Menu.Item>
                     <Menu.Item>
                       {({ active }) => (
+                        <Link
+                          href="/settings"
+                          className={`block px-4 py-2 text-sm ${
+                            active ? 'bg-amber-100 text-amber-800' : 'text-gray-700'
+                          }`}
+                        >
+                          Settings
+                        </Link>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
                         <button
                           onClick={logout}
                           className={`block px-4 py-2 text-sm w-full text-left ${
@@ -192,6 +204,17 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 My Profile
+              </Link>
+              <Link 
+                href="/settings" 
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/settings') 
+                    ? 'bg-amber-900 text-white' 
+                    : 'text-amber-100 hover:bg-amber-700'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Settings
               </Link>
               <button
                 onClick={() => {
