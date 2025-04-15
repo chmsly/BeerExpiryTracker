@@ -1,98 +1,67 @@
 import api from './api';
 
 export interface BeerDTO {
-  id: string;
-  brandName: string;
-  productName: string;
-  type?: string;
+  id: number;
+  name: string;
+  type: string;
+  brand: string;
   expiryDate: string;
-  imageUrl?: string;
+  quantity: number;
+  notes?: string;
+  userId: number;
 }
 
-export interface BeerFormData {
-  brandName: string;
-  productName: string;
-  type?: string;
-  expiryDate: Date;
-  image?: File;
+export interface BeerCreateRequest {
+  name: string;
+  type: string;
+  brand: string;
+  expiryDate: string;
+  quantity: number;
+  notes?: string;
+}
+
+export interface BeerUpdateRequest extends BeerCreateRequest {
+  id: number;
+}
+
+export interface BeerListResponse {
+  beers: BeerDTO[];
+  total: number;
 }
 
 class BeerService {
-  async getAllBeers(): Promise<BeerDTO[]> {
+  async getAll(): Promise<BeerDTO[]> {
     const response = await api.get<BeerDTO[]>('/beers');
     return response.data;
   }
 
-  async getBeerById(id: string): Promise<BeerDTO> {
+  async getById(id: number): Promise<BeerDTO> {
     const response = await api.get<BeerDTO>(`/beers/${id}`);
     return response.data;
   }
 
-  async searchBeers(query: string): Promise<BeerDTO[]> {
-    const response = await api.get<BeerDTO[]>('/beers/search', {
-      params: { query }
-    });
+  async create(beer: BeerCreateRequest): Promise<BeerDTO> {
+    const response = await api.post<BeerDTO>('/beers', beer);
     return response.data;
   }
 
-  async getUpcomingExpiringBeers(days: number = 30): Promise<BeerDTO[]> {
-    const response = await api.get<BeerDTO[]>('/beers/upcoming', {
-      params: { days }
-    });
+  async update(beer: BeerUpdateRequest): Promise<BeerDTO> {
+    const response = await api.put<BeerDTO>(`/beers/${beer.id}`, beer);
     return response.data;
   }
 
-  async createBeer(beerData: BeerFormData): Promise<BeerDTO> {
-    const formData = new FormData();
-    formData.append('brandName', beerData.brandName);
-    formData.append('productName', beerData.productName);
-    
-    if (beerData.type) {
-      formData.append('type', beerData.type);
-    }
-    
-    formData.append('expiryDate', beerData.expiryDate.toISOString().split('T')[0]);
-    
-    if (beerData.image) {
-      formData.append('image', beerData.image);
-    }
-    
-    const response = await api.post<BeerDTO>('/beers', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    
-    return response.data;
+  async delete(id: number): Promise<void> {
+    await api.delete(`/beers/${id}`);
   }
 
-  async updateBeer(id: string, beerData: BeerFormData): Promise<BeerDTO> {
-    const formData = new FormData();
-    formData.append('brandName', beerData.brandName);
-    formData.append('productName', beerData.productName);
-    
-    if (beerData.type) {
-      formData.append('type', beerData.type);
-    }
-    
-    formData.append('expiryDate', beerData.expiryDate.toISOString().split('T')[0]);
-    
-    if (beerData.image) {
-      formData.append('image', beerData.image);
-    }
-    
-    const response = await api.put<BeerDTO>(`/beers/${id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    
+  async getExpiringSoon(days: number = 7): Promise<BeerDTO[]> {
+    const response = await api.get<BeerDTO[]>(`/beers/expiring?days=${days}`);
     return response.data;
   }
-
-  async deleteBeer(id: string): Promise<boolean> {
-    const response = await api.delete(`/beers/${id}`);
-    return response.data.success;
+  
+  async search(query: string): Promise<BeerDTO[]> {
+    const response = await api.get<BeerDTO[]>(`/beers/search?query=${encodeURIComponent(query)}`);
+    return response.data;
   }
 }
 
