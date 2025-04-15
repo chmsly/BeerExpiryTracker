@@ -1,74 +1,69 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 import Layout from '@/components/Layout';
 
-export default function Home() {
+export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, router]);
+
   return (
     <Layout>
-      <div className="bg-gradient-to-b from-amber-50 to-amber-100">
-        <div className="container mx-auto px-4 py-16 flex flex-col items-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-amber-800 mb-6 text-center">
-            Beer Expiry Tracker
-          </h1>
-          
-          <p className="text-lg md:text-xl text-amber-700 max-w-2xl text-center mb-12">
-            Keep track of your beer inventory and never drink an expired beer again. 
-            Log your beers, set expiration dates, and get notified before they expire.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl w-full mb-16">
-            <div className="bg-white rounded-lg shadow-md p-6 border border-amber-200">
-              <h2 className="text-2xl font-semibold text-amber-800 mb-4">Track Your Collection</h2>
-              <p className="text-amber-700 mb-4">
-                Add your beers to your inventory with brand, type, and expiry dates.
-                Upload images to easily identify your beers.
+      <div className="bg-gradient-to-b from-amber-50 to-amber-100 min-h-[calc(100vh-64px-88px)]">
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md border border-amber-200">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold text-amber-800 mb-4">Welcome to Beer Expiry Tracker</h1>
+              <p className="text-xl text-gray-600">
+                The easy way to keep track of your beer collection and never let a good beer go to waste.
               </p>
-              <Link href="/beers" className="inline-block px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition">
-                View Inventory
-              </Link>
             </div>
             
-            <div className="bg-white rounded-lg shadow-md p-6 border border-amber-200">
-              <h2 className="text-2xl font-semibold text-amber-800 mb-4">Expiry Alerts</h2>
-              <p className="text-amber-700 mb-4">
-                Get notifications about beers that are approaching their expiry date.
-                Never waste another craft beer again.
-              </p>
-              <Link href="/dashboard" className="inline-block px-6 py-3 bg-amber-600 text-white rounded-md hover:bg-amber-700 transition">
-                Check Dashboard
-              </Link>
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="p-6 bg-amber-50 rounded-lg border border-amber-200">
+                <h2 className="text-2xl font-bold text-amber-700 mb-3">
+                  <span className="mr-2">🍺</span> Track Your Collection
+                </h2>
+                <p className="text-gray-700 mb-4">
+                  Add your beers to your personal inventory and keep track of their expiration dates, types, and more.
+                </p>
+              </div>
+              
+              <div className="p-6 bg-amber-50 rounded-lg border border-amber-200">
+                <h2 className="text-2xl font-bold text-amber-700 mb-3">
+                  <span className="mr-2">⏰</span> Never Miss an Expiry Date
+                </h2>
+                <p className="text-gray-700 mb-4">
+                  Receive notifications about upcoming expiry dates so you can enjoy your beers at their best.
+                </p>
+              </div>
             </div>
-          </div>
-          
-          <div className="bg-white rounded-lg shadow-md p-8 border border-amber-200 max-w-4xl w-full">
-            <h2 className="text-3xl font-semibold text-amber-800 mb-6 text-center">
-              Getting Started
-            </h2>
             
-            <ol className="list-decimal list-inside space-y-4">
-              <li className="text-amber-700">
-                <span className="font-medium">Create an account</span> - Sign up with your email and password
-              </li>
-              <li className="text-amber-700">
-                <span className="font-medium">Add your beers</span> - Input details about each beer in your collection
-              </li>
-              <li className="text-amber-700">
-                <span className="font-medium">Track expiry dates</span> - See which beers are expiring soon
-              </li>
-              <li className="text-amber-700">
-                <span className="font-medium">Get notified</span> - Receive reminders before your beers expire
-              </li>
-            </ol>
-            
-            <div className="mt-8 text-center">
-              <Link href="/auth/register" className="inline-block px-8 py-4 bg-amber-600 text-white rounded-md text-lg hover:bg-amber-700 transition">
-                Sign Up Now
-              </Link>
-              <p className="mt-4 text-amber-600">
-                Already have an account?{' '}
-                <Link href="/auth/login" className="text-amber-800 underline">
-                  Log in
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <h2 className="text-2xl font-semibold text-amber-800 mb-2">Get Started Today</h2>
+              <div className="flex space-x-4">
+                <Link
+                  href="/auth/login"
+                  className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 rounded-md font-medium transition"
+                >
+                  Log In
                 </Link>
-              </p>
+                <Link
+                  href="/auth/register"
+                  className="bg-white hover:bg-amber-50 text-amber-700 border border-amber-600 px-6 py-3 rounded-md font-medium transition"
+                >
+                  Register
+                </Link>
+              </div>
             </div>
           </div>
         </div>
