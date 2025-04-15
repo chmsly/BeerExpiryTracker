@@ -2,41 +2,36 @@
 
 import { ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
 import { useAuth } from '@/contexts/AuthContext';
-import Layout from './Layout';
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  redirectTo?: string;
-  message?: string;
 }
 
-export default function ProtectedRoute({
-  children,
-  redirectTo = '/auth/login',
-  message = 'Please log in to access this page'
-}: ProtectedRouteProps) {
+export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push(redirectTo);
-      toast.info(message);
+      router.push('/auth/login');
     }
-  }, [isAuthenticated, loading, router, redirectTo, message]);
+  }, [isAuthenticated, loading, router]);
 
+  // If authentication is loading, render nothing or a spinner
   if (loading) {
     return (
-      <Layout>
-        <div className="min-h-[calc(100vh-64px-88px)] flex items-center justify-center">
-          <div className="text-amber-800 text-xl">Loading...</div>
-        </div>
-      </Layout>
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-600"></div>
+      </div>
     );
   }
 
-  // Only render children if authenticated
-  return isAuthenticated ? <>{children}</> : null;
+  // If not authenticated, render nothing (will redirect in the useEffect)
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  // If authenticated, render the children components
+  return <>{children}</>;
 } 
