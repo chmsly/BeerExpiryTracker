@@ -50,7 +50,7 @@ export default function SettingsPage() {
     const { name, value } = e.target;
     setSettings(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'expiryWarningDays' ? parseInt(value) : value
     }));
   };
 
@@ -75,6 +75,63 @@ export default function SettingsPage() {
       toast.success('Settings saved successfully');
       setLoading(false);
     }, 500);
+  };
+
+  // Function to get expiry status class based on days remaining
+  const getExpiryStatusClass = (daysRemaining: number) => {
+    if (daysRemaining <= 7) {
+      return 'bg-red-100 text-red-800 border-red-300';
+    } else if (daysRemaining <= 14) {
+      return 'bg-orange-100 text-orange-800 border-orange-300';
+    } else if (daysRemaining <= 30) {
+      return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+    } else {
+      return 'bg-green-100 text-green-800 border-green-300';
+    }
+  };
+
+  // Get example dates based on warning threshold
+  const getExampleDates = () => {
+    const today = new Date();
+    const examples = [];
+    
+    // Warning threshold date
+    const warningDate = new Date(today);
+    warningDate.setDate(today.getDate() + settings.expiryWarningDays);
+    examples.push({
+      date: warningDate,
+      label: `Warning Threshold (${settings.expiryWarningDays} days)`,
+      status: getExpiryStatusClass(settings.expiryWarningDays)
+    });
+    
+    // Critical date (3 days)
+    const criticalDate = new Date(today);
+    criticalDate.setDate(today.getDate() + 3);
+    examples.push({
+      date: criticalDate,
+      label: '3 days until expiry',
+      status: getExpiryStatusClass(3)
+    });
+    
+    // Expired date
+    const expiredDate = new Date(today);
+    expiredDate.setDate(today.getDate() - 1);
+    examples.push({
+      date: expiredDate,
+      label: 'Expired',
+      status: 'bg-red-100 text-red-800 border-red-300'
+    });
+    
+    return examples;
+  };
+
+  // Format date for display
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(date);
   };
 
   return (
@@ -195,6 +252,26 @@ export default function SettingsPage() {
                               You'll be notified when beers are about to expire within this timeframe
                             </p>
                           </div>
+                          
+                          {/* Expiry warning preview */}
+                          {settings.notificationsEnabled && (
+                            <div className="mt-6 border border-gray-200 rounded-md p-4 bg-gray-50">
+                              <h3 className="text-sm font-medium text-gray-700 mb-3">Preview of expiry status indicators:</h3>
+                              <div className="space-y-3">
+                                {getExampleDates().map((example, index) => (
+                                  <div key={index} className="flex items-center justify-between">
+                                    <span className="text-sm text-gray-600">{example.label}</span>
+                                    <div className="flex items-center">
+                                      <span className="text-sm text-gray-600 mr-2">{formatDate(example.date)}</span>
+                                      <span className={`px-3 py-1 text-xs font-medium rounded-full border ${example.status}`}>
+                                        {index === 2 ? 'Expired' : `${index === 0 ? settings.expiryWarningDays : 3} days left`}
+                                      </span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
                     )}
