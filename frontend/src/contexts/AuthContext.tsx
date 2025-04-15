@@ -1,120 +1,118 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import authService, { UserData } from '@/services/auth.service';
+import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
+import authService, { LoginRequest, RegisterRequest, UserData } from '@/services/auth.service';
 
-// Define the context type
-export interface AuthContextType {
+interface AuthContextType {
+  currentUser: UserData | null;
   isAuthenticated: boolean;
   loading: boolean;
-  currentUser: UserData | null;
-  login: (username: string, password: string) => Promise<boolean>;
-  register: (username: string, email: string, password: string) => Promise<boolean>;
+  login: (credentials: LoginRequest) => Promise<boolean>;
+  register: (userData: RegisterRequest) => Promise<boolean>;
   logout: () => void;
-  updateUser: (userData: UserData) => Promise<boolean>;
 }
 
-// Create the context with a default empty value
-const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  loading: true,
-  currentUser: null,
-  login: async () => false,
-  register: async () => false,
-  logout: () => {},
-  updateUser: async () => false,
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Custom hook to use the auth context
-export const useAuth = () => useContext(AuthContext);
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-// Provider component
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
-  // Check if user is authenticated on initial load
+  // Check auth status on initial load
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuthStatus = () => {
       const user = authService.getCurrentUser();
       if (user) {
-        setIsAuthenticated(true);
         setCurrentUser(user);
+        setIsAuthenticated(authService.isAuthenticated());
+      } else {
+        setCurrentUser(null);
+        setIsAuthenticated(false);
       }
       setLoading(false);
     };
-
-    checkAuth();
+    
+    checkAuthStatus();
   }, []);
 
-  // Login function
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (credentials: LoginRequest): Promise<boolean> => {
     try {
-      const response = await authService.login({ username, password });
-      setIsAuthenticated(true);
-      setCurrentUser(authService.getCurrentUser());
-      return true;
-    } catch (error) {
-      console.error('Login error:', error);
+      setLoading(true);
+      const success = await authService.login(credentials);
+      
+      if (success) {
+        const user = authService.getCurrentUser();
+        setCurrentUser(user);
+        setIsAuthenticated(true);
+        toast.success('Login successful!');
+        router.push('/dashboard');
+        return true;
+      }
+      
       return false;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Login failed. Please try again.';
+      toast.error(errorMessage);
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Register function
-  const register = async (username: string, email: string, password: string): Promise<boolean> => {
+  const register = async (userData: RegisterRequest): Promise<boolean> => {
     try {
-      const response = await authService.register({ username, email, password });
-      return response;
-    } catch (error) {
-      console.error('Registration error:', error);
+      setLoading(true);
+      const success = await authService.register(userData);
+      
+      if (success) {
+        toast.success('Registration successful! Please log in.');
+        router.push('/auth/login');
+        return true;
+      }
+      
       return false;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Registration failed. Please try again.';
+      toast.error(errorMessage);
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Logout function
   const logout = () => {
     authService.logout();
-    setIsAuthenticated(false);
     setCurrentUser(null);
+    setIsAuthenticated(false);
+    toast.info('You have been logged out.');
     router.push('/auth/login');
   };
 
-  // Update user function
-  const updateUser = async (userData: UserData): Promise<boolean> => {
-    try {
-      // In a real app, you would call an API to update the user
-      // For now, we'll just update the local state
-      setCurrentUser(userData);
-      
-      // Update the user in local storage
-      const token = localStorage.getItem('token');
-      if (token) {
-        localStorage.setItem('user', JSON.stringify(userData));
-      }
-      
-      return true;
-    } catch (error) {
-      console.error('Update user error:', error);
-      return false;
-    }
-  };
-
   const value = {
+    currentUser,
     isAuthenticated,
     loading,
-    currentUser,
     login,
     register,
-    logout,
-    updateUser,
+    logout
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}; 
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+} 
