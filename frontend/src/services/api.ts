@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+// Define base API URL from environment variables or use a default
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
+// Create axios instance with default config
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -9,7 +11,7 @@ const api = axios.create({
   },
 });
 
-// Request interceptor for adding the auth token
+// Add a request interceptor to include auth token in requests
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -23,19 +25,18 @@ api.interceptors.request.use(
   }
 );
 
-// Response interceptor for handling token expiration
+// Add a response interceptor to handle token expiration
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Clear local storage on authentication error
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Handle 401 Unauthorized errors (token expired)
+    if (error.response && error.response.status === 401) {
+      // Clear local storage and redirect to login
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
-      // Redirect to login if not already there
-      if (typeof window !== 'undefined' && !window.location.pathname.includes('/login')) {
-        window.location.href = '/login';
-      }
+      window.location.href = '/auth/login';
     }
     return Promise.reject(error);
   }
