@@ -29,6 +29,24 @@ export interface BeerListResponse {
   total: number;
 }
 
+export interface ExpiryTimelineStats {
+  expiryBreakdown: {
+    expired: number;
+    within30Days: number;
+    within90Days: number;
+    after90Days: number;
+  };
+  monthlyExpiry: Record<string, number>;
+}
+
+export interface StatsSummary {
+  totalBeers: number;
+  expiredBeers: number;
+  expiringSoon: number;
+  avgDaysUntilExpiry: number;
+  topBeerTypes: Array<{type: string, count: number}>;
+}
+
 class BeerService {
   async getAll(): Promise<BeerDTO[]> {
     const response = await api.get<BeerDTO[]>('/beers');
@@ -61,6 +79,27 @@ class BeerService {
   
   async search(query: string): Promise<BeerDTO[]> {
     const response = await api.get<BeerDTO[]>(`/beers/search?query=${encodeURIComponent(query)}`);
+    return response.data;
+  }
+
+  // Statistics methods
+  async getExpiryTimelineStats(): Promise<ExpiryTimelineStats> {
+    const response = await api.get<ExpiryTimelineStats>('/beers/stats/expiry-timeline');
+    return response.data;
+  }
+
+  async getTypeDistribution(): Promise<Record<string, number>> {
+    const response = await api.get<Record<string, number>>('/beers/stats/type-distribution');
+    return response.data;
+  }
+
+  async getBrandDistribution(): Promise<Record<string, number>> {
+    const response = await api.get<Record<string, number>>('/beers/stats/brand-distribution');
+    return response.data;
+  }
+
+  async getStatsSummary(): Promise<StatsSummary> {
+    const response = await api.get<StatsSummary>('/beers/stats/summary');
     return response.data;
   }
 }

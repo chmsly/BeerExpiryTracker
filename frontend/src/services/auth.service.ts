@@ -4,28 +4,24 @@ import { jwtDecode } from 'jwt-decode';
 export interface LoginRequest {
   username: string;
   password: string;
-  deviceToken?: string;
 }
 
 export interface RegisterRequest {
   username: string;
   email: string;
   password: string;
-  deviceToken?: string;
 }
 
 export interface JwtResponse {
   token: string;
   type: string;
-  id: string;
-  username: string;
-  email: string;
 }
 
 export interface UserData {
-  id: string;
+  id: number;
   username: string;
   email: string;
+  roles: string[];
 }
 
 class AuthService {
@@ -34,11 +30,7 @@ class AuthService {
       const response = await api.post<JwtResponse>('/auth/login', loginRequest);
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
-        localStorage.setItem('user', JSON.stringify({
-          id: response.data.id,
-          username: response.data.username,
-          email: response.data.email,
-        }));
+        this.storeUserData(response.data.token);
         return true;
       }
       return false;
@@ -51,7 +43,7 @@ class AuthService {
   async register(registerRequest: RegisterRequest): Promise<boolean> {
     try {
       const response = await api.post('/auth/register', registerRequest);
-      return response.data.success;
+      return response.status === 201 || response.status === 200;
     } catch (error) {
       console.error('Registration error:', error);
       throw error;
@@ -65,30 +57,48 @@ class AuthService {
 
   getCurrentUser(): UserData | null {
     const userStr = localStorage.getItem('user');
-    if (userStr) {
-      return JSON.parse(userStr) as UserData;
+    if (!userStr) return null;
+    
+    try {
+      return JSON.parse(userStr);
+    } catch {
+      return null;
     }
-    return null;
   }
 
   isAuthenticated(): boolean {
     const token = localStorage.getItem('token');
-    if (!token) {
-      return false;
-    }
-
+    if (!token) return false;
+    
     try {
       const decoded: any = jwtDecode(token);
-      // Check if token is expired
       const currentTime = Date.now() / 1000;
+      
+      // Check if token is expired
       if (decoded.exp < currentTime) {
         this.logout();
         return false;
       }
+      
       return true;
-    } catch (error) {
-      this.logout();
+    } catch {
       return false;
+    }
+  }
+
+  private storeUserData(token: string): void {
+    try {
+      const decoded: any = jwtDecode(token);
+      const userData: UserData = {
+        id: decoded.id,
+        username: decoded.sub,
+        email: decoded.email,
+        roles: decoded.roles || []
+      };
+      
+      localStorage.setItem('user', JSON.stringify(userData));
+    } catch (error) {
+      console.error('Error storing user data:', error);
     }
   }
 }

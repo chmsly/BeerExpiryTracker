@@ -48,6 +48,16 @@ export default function Navbar() {
                   >
                     My Beers
                   </Link>
+                  <Link 
+                    href="/statistics" 
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                      isActive('/statistics')
+                        ? 'bg-amber-900 text-white' 
+                        : 'text-amber-100 hover:bg-amber-700'
+                    }`}
+                  >
+                    Statistics
+                  </Link>
                 </>
               )}
             </div>
@@ -193,6 +203,17 @@ export default function Navbar() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 My Beers
+              </Link>
+              <Link 
+                href="/statistics" 
+                className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  isActive('/statistics')
+                    ? 'bg-amber-900 text-white' 
+                    : 'text-amber-100 hover:bg-amber-700'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Statistics
               </Link>
               <Link 
                 href="/profile" 

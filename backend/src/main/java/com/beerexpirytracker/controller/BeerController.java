@@ -57,6 +57,30 @@ public class BeerController {
         return ResponseEntity.ok(beers);
     }
     
+    @GetMapping("/stats/expiry-timeline")
+    public ResponseEntity<?> getExpiryTimelineStats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Map<String, Object> stats = beerService.getExpiryTimelineStats(userDetails.getId());
+        return ResponseEntity.ok(stats);
+    }
+    
+    @GetMapping("/stats/type-distribution")
+    public ResponseEntity<?> getTypeDistributionStats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Map<String, Long> stats = beerService.getTypeDistributionStats(userDetails.getId());
+        return ResponseEntity.ok(stats);
+    }
+    
+    @GetMapping("/stats/brand-distribution")
+    public ResponseEntity<?> getBrandDistributionStats(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Map<String, Long> stats = beerService.getBrandDistributionStats(userDetails.getId());
+        return ResponseEntity.ok(stats);
+    }
+    
+    @GetMapping("/stats/summary")
+    public ResponseEntity<?> getStatsSummary(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Map<String, Object> summary = beerService.getStatsSummary(userDetails.getId());
+        return ResponseEntity.ok(summary);
+    }
+    
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createBeer(
             @RequestParam("brandName") String brandName,
