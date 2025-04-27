@@ -59,7 +59,7 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-white rounded-lg shadow-md p-6 border border-amber-200">
                 <h2 className="text-xl font-semibold text-amber-800 mb-2">Quick Actions</h2>
                 <div className="space-y-3">
@@ -104,7 +104,7 @@ export default function DashboardPage() {
                     {expiringSoon.slice(0, 5).map((beer) => (
                       <li key={beer.id} className="border-b border-gray-100 pb-2 last:border-0">
                         <Link href={`/beers/${beer.id}`} className="hover:text-amber-700">
-                          <span className="font-medium">{beer.name}</span>
+                          <span className="font-medium">{beer.productName}</span>
                           <div className="text-sm text-gray-600">
                             Expires: {new Date(beer.expiryDate).toLocaleDateString()}
                           </div>
@@ -122,30 +122,6 @@ export default function DashboardPage() {
                 ) : (
                   <p className="text-gray-600 py-2">No beers expiring soon!</p>
                 )}
-              </div>
-
-              <div className="bg-white rounded-lg shadow-md p-6 border border-amber-200">
-                <h2 className="text-xl font-semibold text-amber-800 mb-2">Tips & Insights</h2>
-                <ul className="space-y-3 text-gray-700">
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-600 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    Most beers are best consumed fresh for optimal flavor.
-                  </li>
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-600 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    Store your beer in a cool, dark place for the longest shelf life.
-                  </li>
-                  <li className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-amber-600 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    Check your inventory weekly to ensure nothing expires unexpectedly.
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
