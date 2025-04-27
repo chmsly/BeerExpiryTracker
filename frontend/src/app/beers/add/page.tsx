@@ -149,21 +149,6 @@ export default function AddBeerPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-1">
-                      Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      id="productName"
-                      type="text"
-                      name="productName"
-                      value={formData.productName}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
                     <label htmlFor="brandName" className="block text-sm font-medium text-gray-700 mb-1">
                       Brand <span className="text-red-500">*</span>
                     </label>
@@ -179,27 +164,18 @@ export default function AddBeerPage() {
                   </div>
                   
                   <div>
-                    <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                      Type
+                    <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-1">
+                      Package <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      id="type"
-                      name="type"
-                      value={formData.type}
+                    <input
+                      id="productName"
+                      type="text"
+                      name="productName"
+                      value={formData.productName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    >
-                      <option value="">Select Type</option>
-                      <option value="Lager">Lager</option>
-                      <option value="IPA">IPA</option>
-                      <option value="Stout">Stout</option>
-                      <option value="Porter">Porter</option>
-                      <option value="Ale">Ale</option>
-                      <option value="Wheat">Wheat</option>
-                      <option value="Pilsner">Pilsner</option>
-                      <option value="Sour">Sour</option>
-                      <option value="Other">Other</option>
-                    </select>
+                      required
+                    />
                   </div>
                   
                   <div>
