@@ -1,28 +1,42 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { BeerBottle, Calendar, Clock, TrendingUp, Award, Package, AlertTriangle } from 'lucide-react';
-import statisticsService, { StatisticsResponse } from '@/services/statistics.service';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
+import beerService, { StatsSummary, ExpiryTimelineStats } from '@/services/beer.service';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
+import { Pie, Bar } from 'react-chartjs-2';
+
+// Register ChartJS components
+ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function StatisticsPage() {
-  const [statistics, setStatistics] = useState<StatisticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [summary, setSummary] = useState<StatsSummary | null>(null);
+  const [typeDistribution, setTypeDistribution] = useState<Record<string, number>>({});
+  const [brandDistribution, setBrandDistribution] = useState<Record<string, number>>({});
+  const [expiryTimeline, setExpiryTimeline] = useState<ExpiryTimelineStats | null>(null);
 
   useEffect(() => {
     const fetchStatistics = async () => {
       try {
         setLoading(true);
-        const data = await statisticsService.getStatistics();
-        setStatistics(data);
+        const [summaryData, typeData, brandData, timelineData] = await Promise.all([
+          beerService.getStatsSummary(),
+          beerService.getTypeDistribution(),
+          beerService.getBrandDistribution(),
+          beerService.getExpiryTimelineStats()
+        ]);
+        
+        setSummary(summaryData);
+        setTypeDistribution(typeData);
+        setBrandDistribution(brandData);
+        setExpiryTimeline(timelineData);
         setError(null);
       } catch (err) {
+        console.error('Failed to fetch statistics:', err);
         setError('Failed to load statistics. Please try again later.');
-        console.error('Error fetching statistics:', err);
       } finally {
         setLoading(false);
       }
@@ -31,124 +45,180 @@ export default function StatisticsPage() {
     fetchStatistics();
   }, []);
 
+  const typeChartData = {
+    labels: Object.keys(typeDistribution),
+    datasets: [
+      {
+        label: 'Beer Types',
+        data: Object.values(typeDistribution),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+          'rgba(153, 102, 255, 0.5)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const brandChartData = {
+    labels: Object.keys(brandDistribution),
+    datasets: [
+      {
+        label: 'Beer Brands',
+        data: Object.values(brandDistribution),
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const expiryBreakdownData = expiryTimeline ? {
+    labels: ['Expired', 'Within 30 Days', 'Within 90 Days', 'After 90 Days'],
+    datasets: [
+      {
+        label: 'Expiry Timeline',
+        data: [
+          expiryTimeline.expiryBreakdown.expired,
+          expiryTimeline.expiryBreakdown.within30Days,
+          expiryTimeline.expiryBreakdown.within90Days,
+          expiryTimeline.expiryBreakdown.after90Days,
+        ],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.5)',
+          'rgba(255, 206, 86, 0.5)',
+          'rgba(54, 162, 235, 0.5)',
+          'rgba(75, 192, 192, 0.5)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(75, 192, 192, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  } : { labels: [], datasets: [] };
+
+  const monthlyExpiryData = expiryTimeline ? {
+    labels: Object.keys(expiryTimeline.monthlyExpiry),
+    datasets: [
+      {
+        label: 'Beers Expiring',
+        data: Object.values(expiryTimeline.monthlyExpiry),
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+      },
+    ],
+  } : { labels: [], datasets: [] };
+
   return (
     <ProtectedRoute>
       <Layout>
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto px-4 py-8">
           <h1 className="text-3xl font-bold mb-6">Beer Statistics</h1>
           
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[...Array(7)].map((_, i) => (
-                <Card key={i} className="w-full">
-                  <CardHeader className="pb-2">
-                    <Skeleton className="h-4 w-1/2 mb-2" />
-                    <Skeleton className="h-8 w-full" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-20 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : error ? (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-              <span className="block sm:inline">{error}</span>
-            </div>
-          ) : statistics ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <BeerBottle className="h-5 w-5 text-primary" />
-                    <CardTitle className="text-lg">Total Beers</CardTitle>
+          {loading && <p className="text-gray-600">Loading statistics...</p>}
+          
+          {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+
+          {!loading && !error && (
+            <>
+              {/* Summary Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700">Total Beers</h3>
+                  <p className="text-3xl font-bold text-blue-600">{summary?.totalBeers || 0}</p>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700">Expired Beers</h3>
+                  <p className="text-3xl font-bold text-red-600">{summary?.expiredBeers || 0}</p>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700">Expiring Soon</h3>
+                  <p className="text-3xl font-bold text-yellow-600">{summary?.expiringSoon || 0}</p>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700">Avg Days Until Expiry</h3>
+                  <p className="text-3xl font-bold text-green-600">
+                    {summary?.avgDaysUntilExpiry ? Math.round(summary.avgDaysUntilExpiry) : 0}
+                  </p>
+                </div>
+              </div>
+
+              {/* Charts */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">Beer Types Distribution</h3>
+                  <div className="h-64">
+                    <Pie data={typeChartData} options={{ maintainAspectRatio: false }} />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{statistics.totalBeers}</p>
-                  <p className="text-sm text-gray-500 mt-2">Total beers in your inventory</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-5 w-5 text-yellow-500" />
-                    <CardTitle className="text-lg">Expiring Soon</CardTitle>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">Expiry Timeline</h3>
+                  <div className="h-64">
+                    <Pie data={expiryBreakdownData} options={{ maintainAspectRatio: false }} />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{statistics.beersExpiringInOneWeek}</p>
-                  <p className="text-sm text-gray-500 mt-2">Beers expiring within one week</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-5 w-5 text-blue-500" />
-                    <CardTitle className="text-lg">Expiring This Month</CardTitle>
+                </div>
+
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">Top Beer Brands</h3>
+                  <div className="h-64">
+                    <Bar 
+                      data={brandChartData} 
+                      options={{ 
+                        maintainAspectRatio: false,
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            ticks: {
+                              precision: 0
+                            }
+                          }
+                        }
+                      }} 
+                    />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{statistics.beersExpiringInOneMonth}</p>
-                  <p className="text-sm text-gray-500 mt-2">Beers expiring within one month</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <AlertTriangle className="h-5 w-5 text-red-500" />
-                    <CardTitle className="text-lg">Expired</CardTitle>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow p-6">
+                  <h3 className="text-lg font-semibold text-gray-700 mb-4">Monthly Expiry Forecast</h3>
+                  <div className="h-64">
+                    <Bar 
+                      data={monthlyExpiryData} 
+                      options={{ 
+                        maintainAspectRatio: false,
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            ticks: {
+                              precision: 0
+                            }
+                          }
+                        }
+                      }} 
+                    />
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{statistics.beersExpired}</p>
-                  <p className="text-sm text-gray-500 mt-2">Beers that have already expired</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Award className="h-5 w-5 text-purple-500" />
-                    <CardTitle className="text-lg">Most Common Brand</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-bold">{statistics.mostCommonBrand || 'N/A'}</p>
-                  <p className="text-sm text-gray-500 mt-2">Your preferred beer brand</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Package className="h-5 w-5 text-green-500" />
-                    <CardTitle className="text-lg">Most Common Type</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-bold">{statistics.mostCommonType || 'N/A'}</p>
-                  <p className="text-sm text-gray-500 mt-2">Your preferred beer type</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-5 w-5 text-indigo-500" />
-                    <CardTitle className="text-lg">Average Days to Expiry</CardTitle>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-4xl font-bold">{Math.round(statistics.averageDaysToExpiry)}</p>
-                  <p className="text-sm text-gray-500 mt-2">Average days until your beers expire</p>
-                </CardContent>
-              </Card>
-            </div>
-          ) : null}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </Layout>
     </ProtectedRoute>
