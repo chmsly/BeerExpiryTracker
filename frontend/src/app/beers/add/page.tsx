@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import DatePicker from 'react-datepicker';
@@ -16,34 +16,29 @@ export default function AddBeerPage() {
   const { addBeer } = useBeer();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   
   const [formData, setFormData] = useState<BeerCreateRequest>({
-    name: '',
+    productName: '',
+    brandName: '',
     type: '',
-    brand: '',
-    quantity: 1,
     expiryDate: new Date().toISOString().split('T')[0],
-    notes: ''
+    image: null
   });
   
   const [expiryDate, setExpiryDate] = useState<Date | null>(new Date());
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [notes, setNotes] = useState('');
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    const numberValue = parseInt(value, 10);
-    
-    if (!isNaN(numberValue) && numberValue > 0) {
+    if (name === 'notes') {
+      setNotes(value);
+    } else {
       setFormData(prev => ({
         ...prev,
-        [name]: numberValue
+        [name]: value
       }));
     }
   };
@@ -57,11 +52,52 @@ export default function AddBeerPage() {
       }));
     }
   };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setImagePreview(imageUrl);
+      setFormData(prev => ({
+        ...prev,
+        image: file
+      }));
+    }
+  };
+
+  const handleCameraCapture = () => {
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
+    }
+  };
+
+  const handleFileUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const removeImage = () => {
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview(null);
+    setFormData(prev => ({
+      ...prev,
+      image: null
+    }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    if (cameraInputRef.current) {
+      cameraInputRef.current.value = '';
+    }
+  };
   
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.brand || !formData.expiryDate) {
+    if (!formData.productName || !formData.brandName || !formData.expiryDate) {
       setError('Please fill in all required fields');
       return;
     }
@@ -113,14 +149,14 @@ export default function AddBeerPage() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="productName" className="block text-sm font-medium text-gray-700 mb-1">
                       Name <span className="text-red-500">*</span>
                     </label>
                     <input
-                      id="name"
+                      id="productName"
                       type="text"
-                      name="name"
-                      value={formData.name}
+                      name="productName"
+                      value={formData.productName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                       required
@@ -128,14 +164,14 @@ export default function AddBeerPage() {
                   </div>
                   
                   <div>
-                    <label htmlFor="brand" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="brandName" className="block text-sm font-medium text-gray-700 mb-1">
                       Brand <span className="text-red-500">*</span>
                     </label>
                     <input
-                      id="brand"
+                      id="brandName"
                       type="text"
-                      name="brand"
-                      value={formData.brand}
+                      name="brandName"
+                      value={formData.brandName}
                       onChange={handleInputChange}
                       className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                       required
@@ -167,21 +203,6 @@ export default function AddBeerPage() {
                   </div>
                   
                   <div>
-                    <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1">
-                      Quantity
-                    </label>
-                    <input
-                      id="quantity"
-                      type="number"
-                      name="quantity"
-                      min="1"
-                      value={formData.quantity}
-                      onChange={handleNumberChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    />
-                  </div>
-                  
-                  <div>
                     <label htmlFor="expiryDate" className="block text-sm font-medium text-gray-700 mb-1">
                       Expiry Date <span className="text-red-500">*</span>
                     </label>
@@ -195,6 +216,70 @@ export default function AddBeerPage() {
                       required
                     />
                   </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Beer Image
+                    </label>
+                    <div className="flex flex-col space-y-3">
+                      <div className="flex space-x-2">
+                        <button
+                          type="button"
+                          onClick={handleFileUpload}
+                          className="px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition flex items-center"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+                          </svg>
+                          Upload Photo
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCameraCapture}
+                          className="px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition flex items-center"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4z" clipRule="evenodd" />
+                            <path d="M10 14a4 4 0 100-8 4 4 0 000 8z" />
+                          </svg>
+                          Take Photo
+                        </button>
+                      </div>
+                      <input 
+                        ref={fileInputRef}
+                        type="file" 
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden" 
+                      />
+                      <input 
+                        ref={cameraInputRef}
+                        type="file" 
+                        accept="image/*"
+                        capture="environment"
+                        onChange={handleImageChange}
+                        className="hidden" 
+                      />
+                      {imagePreview && (
+                        <div className="relative mt-2">
+                          <img 
+                            src={imagePreview} 
+                            alt="Beer preview" 
+                            className="h-48 w-full object-cover rounded-md"
+                          />
+                          <button
+                            type="button"
+                            onClick={removeImage}
+                            className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 
                 <div>
@@ -205,7 +290,7 @@ export default function AddBeerPage() {
                     id="notes"
                     name="notes"
                     rows={3}
-                    value={formData.notes}
+                    value={notes}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
                     placeholder="Additional information about this beer..."
