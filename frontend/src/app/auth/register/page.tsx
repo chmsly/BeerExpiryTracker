@@ -14,6 +14,7 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
   const router = useRouter();
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const isValidEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,7 +51,11 @@ export default function RegisterPage() {
         toast.success('Registration successful!');
         router.push('/dashboard');
       } else {
-        toast.error('Registration failed. Please try again.');
+        if (isDevelopment) {
+          toast.error('In development mode, registration will always succeed.');
+        } else {
+          toast.error('Registration failed. Please try again.');
+        }
       }
     } catch (error) {
       toast.error('An error occurred during registration');
@@ -64,6 +69,20 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
         <h1 className="text-2xl font-semibold text-center text-amber-800 mb-6">Create an Account</h1>
+        
+        {isDevelopment && (
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm text-blue-800">
+              <strong>Development Mode:</strong> Registration will create a mock account.
+              <br />
+              After registering, you can log in with:
+              <br />
+              Email: <code className="bg-gray-100 px-1">test@example.com</code>
+              <br />
+              Password: <code className="bg-gray-100 px-1">password</code>
+            </p>
+          </div>
+        )}
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

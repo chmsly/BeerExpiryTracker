@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useState, ReactNode, useCallback } from 'react';
 import beerService, { BeerDTO, BeerCreateRequest, BeerUpdateRequest } from '@/services/beer.service';
 import { toast } from 'react-toastify';
