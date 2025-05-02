@@ -54,13 +54,22 @@ export default function LoginPage() {
         </div>
         
         {isDevelopment && (
-          <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-sm text-primary">
-              <strong>Development Mode:</strong> Use the credentials:
+          <div className="mb-6 p-4 bg-primary/10 border-2 border-primary/30 rounded-lg">
+            <p className="text-sm text-primary font-medium">
+              <strong className="text-lg">Development Mode</strong>
               <br />
-              Email: <code className="bg-secondary-light px-2 py-1 rounded">test@example.com</code>
+              <span className="text-primary-dark">Use these test credentials:</span>
               <br />
-              Password: <code className="bg-secondary-light px-2 py-1 rounded">password</code>
+              <div className="mt-2 space-y-1">
+                <div className="flex items-center">
+                  <span className="font-semibold mr-2">Email:</span>
+                  <code className="bg-secondary-light px-3 py-1 rounded text-primary-dark">test@example.com</code>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-semibold mr-2">Password:</span>
+                  <code className="bg-secondary-light px-3 py-1 rounded text-primary-dark">password</code>
+                </div>
+              </div>
             </p>
           </div>
         )}
