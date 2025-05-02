@@ -1,8 +1,26 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Coors Light Colors */
+  --primary: #0071CE;
+  --primary-light: #33A7FF;
+  --primary-dark: #005BA9;
+  
+  --secondary: #C6C9CA;
+  --secondary-light: #E5E7E8;
+  --secondary-dark: #979C9E;
+  
+  --accent: #BF0D3E;
+  --accent-light: #FF3366;
+  --accent-dark: #85092C;
+
+  /* Background mountain cool blue - subtle */
+  --mountain-blue: #E5F4FF;
 }
 
 @theme inline {
@@ -14,8 +32,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #001B3A;
+    --foreground: #E5E7E8;
   }
 }
 
@@ -23,4 +41,63 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Coors Light Custom Classes */
+@layer components {
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+  }
+  
+  .btn-primary:focus {
+    outline: 2px solid var(--primary-light);
+    outline-offset: 2px;
+  }
+  
+  .btn-secondary {
+    background-color: var(--secondary);
+    color: var(--foreground);
+    transition: background-color 0.2s;
+  }
+  
+  .btn-secondary:hover {
+    background-color: var(--secondary-dark);
+  }
+  
+  .btn-secondary:focus {
+    outline: 2px solid var(--secondary-light);
+    outline-offset: 2px;
+  }
+  
+  .btn-accent {
+    background-color: var(--accent);
+    color: white;
+    transition: background-color 0.2s;
+  }
+  
+  .btn-accent:hover {
+    background-color: var(--accent-dark);
+  }
+  
+  .btn-accent:focus {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+  }
+  
+  .coors-gradient {
+    background: linear-gradient(to bottom, var(--primary-light), var(--secondary-light));
+  }
+  
+  .card-coors {
+    background-color: white;
+    border: 1px solid var(--secondary);
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  }
 }
