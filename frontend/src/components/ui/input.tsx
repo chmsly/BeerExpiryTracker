@@ -8,10 +8,10 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ label, error, className = '', fullWidth = true, ...props }, ref) => {
-    const baseClasses = 'block px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm';
+    const baseClasses = 'block px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm';
     const stateClasses = error
-      ? 'border-red-300 text-red-900 placeholder-red-300 focus:ring-red-500 focus:border-red-500'
-      : 'border-gray-300 placeholder-gray-400';
+      ? 'border-accent text-accent placeholder-accent-light focus:ring-accent focus:border-accent'
+      : 'border-secondary placeholder-secondary-light';
     const widthClasses = fullWidth ? 'w-full' : '';
 
     return (
@@ -31,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
         </div>
         {error && (
-          <p className="mt-1 text-sm text-red-600" id={`${props.name}-error`}>
+          <p className="mt-1 text-sm text-accent" id={`${props.name}-error`}>
             {error}
           </p>
         )}
