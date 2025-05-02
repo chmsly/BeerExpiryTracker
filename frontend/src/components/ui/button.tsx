@@ -28,20 +28,21 @@ export function Button({
   };
 
   const sizeClasses = {
-    sm: "text-xs px-2 py-1",
-    md: "text-sm px-3 py-2",
-    lg: "text-base px-4 py-3"
+    sm: "text-xs px-3 py-1.5",
+    md: "text-sm px-4 py-2",
+    lg: "text-base px-6 py-3"
   };
 
   return (
     <button
       disabled={disabled || isLoading}
       className={`
-        rounded-md font-medium
+        rounded-lg font-medium transition-all duration-200
         ${variantClasses[variant]}
         ${sizeClasses[size]}
         ${fullWidth ? "w-full" : ""}
         ${className}
+        ${disabled ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] active:scale-[0.98]"}
       `}
       {...props}
     >

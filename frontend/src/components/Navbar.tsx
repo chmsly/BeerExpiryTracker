@@ -33,13 +33,12 @@ export default function Navbar() {
   };
 
   return (
-    <Disclosure as="nav" className="bg-primary shadow-md">
+    <Disclosure as="nav" className="bg-primary shadow-lg">
       {({ open }) => (
         <>
-          <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
-                {/* Mobile menu button*/}
                 <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-white hover:bg-primary-dark hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="absolute -inset-0.5" />
                   <span className="sr-only">Open main menu</span>
@@ -52,7 +51,7 @@ export default function Navbar() {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <span className="text-white font-bold text-xl">Beer Expiry Tracker</span>
+                  <span className="text-white font-bold text-xl tracking-tight">🍺 Beer Expiry Tracker</span>
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -61,8 +60,8 @@ export default function Navbar() {
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current ? 'bg-accent text-white' : 'text-secondary hover:bg-accent hover:text-white',
-                          'rounded-md px-3 py-2 text-sm font-medium'
+                          item.current ? 'bg-accent text-white' : 'text-white/90 hover:bg-accent/80 hover:text-white',
+                          'rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200'
                         )}
                         aria-current={item.current ? 'page' : undefined}
                       >
@@ -76,7 +75,7 @@ export default function Navbar() {
                 {isAuthenticated ? (
                   <Menu as="div" className="relative ml-3">
                     <div>
-                      <Menu.Button className="relative flex rounded-full bg-white p-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                      <Menu.Button className="relative flex rounded-full bg-white p-1 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <UserIcon className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -138,13 +137,13 @@ export default function Navbar() {
                   <div className="flex space-x-4">
                     <Link
                       href="/auth/login"
-                      className="text-white hover:bg-primary-dark px-3 py-2 rounded-md text-sm font-medium"
+                      className="text-white hover:bg-accent/80 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                     >
                       Log in
                     </Link>
                     <Link
                       href="/auth/register"
-                      className="bg-white text-primary hover:bg-secondary-light px-3 py-2 rounded-md text-sm font-medium"
+                      className="bg-white text-primary hover:bg-secondary-light px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                     >
                       Sign up
                     </Link>
@@ -162,8 +161,8 @@ export default function Navbar() {
                   as="a"
                   href={item.href}
                   className={classNames(
-                    item.current ? 'bg-accent text-white' : 'text-secondary hover:bg-accent hover:text-white',
-                    'block rounded-md px-3 py-2 text-base font-medium'
+                    item.current ? 'bg-accent text-white' : 'text-white/90 hover:bg-accent/80 hover:text-white',
+                    'block rounded-md px-3 py-2 text-base font-medium transition-colors duration-200'
                   )}
                   aria-current={item.current ? 'page' : undefined}
                 >
