@@ -66,27 +66,33 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-semibold text-center text-amber-800 mb-6">Create an Account</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+      <div className="max-w-md w-full p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20">
+        <h1 className="text-3xl font-bold text-center text-amber-400 mb-8">Create an Account</h1>
         
         {isDevelopment && (
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <p className="text-sm text-blue-800">
-              <strong>Development Mode:</strong> Registration will create a mock account.
-              <br />
-              After registering, you can log in with:
-              <br />
-              Email: <code className="bg-gray-100 px-1">test@example.com</code>
-              <br />
-              Password: <code className="bg-gray-100 px-1">password</code>
+          <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
+            <p className="text-sm text-amber-200">
+              <strong className="text-amber-400">Development Mode:</strong>
+              <div className="mt-2 space-y-1">
+                <p>Registration will create a mock account.</p>
+                <p>After registering, you can log in with:</p>
+                <div className="flex items-center">
+                  <span className="font-medium mr-2">Email:</span>
+                  <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">test@example.com</code>
+                </div>
+                <div className="flex items-center">
+                  <span className="font-medium mr-2">Password:</span>
+                  <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">password</code>
+                </div>
+              </div>
             </p>
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="username" className="block text-sm font-medium text-amber-200 mb-2">
               Username
             </label>
             <input
@@ -94,7 +100,7 @@ export default function RegisterPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Choose a username"
               required
               minLength={3}
@@ -102,7 +108,7 @@ export default function RegisterPage() {
           </div>
           
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="email" className="block text-sm font-medium text-amber-200 mb-2">
               Email
             </label>
             <input
@@ -110,14 +116,14 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Enter your email"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="password" className="block text-sm font-medium text-amber-200 mb-2">
               Password
             </label>
             <input
@@ -125,18 +131,18 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Create a password"
               required
               minLength={6}
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-slate-400">
               Password must be at least 6 characters long
             </p>
           </div>
           
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-amber-200 mb-2">
               Confirm Password
             </label>
             <input
@@ -144,16 +150,16 @@ export default function RegisterPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
+              className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all ${
                 confirmPassword && password !== confirmPassword
                   ? 'border-red-500'
-                  : 'border-gray-300'
+                  : 'border-slate-700'
               }`}
               placeholder="Confirm your password"
               required
             />
             {confirmPassword && password !== confirmPassword && (
-              <p className="mt-1 text-xs text-red-500">
+              <p className="mt-1 text-xs text-red-400">
                 Passwords do not match
               </p>
             )}
@@ -162,20 +168,28 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading || !isFormValid()}
-            className={`w-full py-2 px-4 rounded-md text-white font-medium ${
+            className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-all duration-200 ${
               isLoading || !isFormValid()
-                ? 'bg-amber-400 cursor-not-allowed'
-                : 'bg-amber-600 hover:bg-amber-700'
-            } transition-colors`}
+                ? 'bg-amber-500/50 cursor-not-allowed'
+                : 'bg-amber-500 hover:bg-amber-600 hover:scale-[1.02] active:scale-[0.98]'
+            }`}
           >
-            {isLoading ? 'Creating Account...' : 'Register'}
+            {isLoading ? (
+              <div className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Creating Account...
+              </div>
+            ) : 'Register'}
           </button>
         </form>
         
-        <div className="mt-4 text-center">
-          <p className="text-gray-600">
+        <div className="mt-6 text-center">
+          <p className="text-slate-300">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-amber-600 hover:text-amber-700">
+            <Link href="/auth/login" className="text-amber-400 hover:text-amber-300 font-medium transition-colors">
               Sign in
             </Link>
           </p>
