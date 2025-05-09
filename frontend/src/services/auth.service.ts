@@ -22,14 +22,11 @@ export interface UserData {
 class AuthService {
   async login({ email, password }: LoginRequest): Promise<boolean> {
     try {
-      // Check if we're in development mode without proper Supabase setup
-      if (process.env.NODE_ENV === 'development' && 
-          (process.env.NEXT_PUBLIC_SUPABASE_URL === 'YOUR_SUPABASE_URL' || 
-           !process.env.NEXT_PUBLIC_SUPABASE_URL)) {
-        
+      // Check if we're in development mode
+      if (process.env.NODE_ENV === 'development') {
         console.log('Development mode: Using mock authentication');
         
-        // Mock login for development without Supabase
+        // Mock login for development
         // Only allow test@example.com with password "password" for testing
         if (email === 'test@example.com' && password === 'password') {
           const userData: UserData = {
