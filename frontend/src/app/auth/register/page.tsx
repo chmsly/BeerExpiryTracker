@@ -72,11 +72,11 @@ export default function RegisterPage() {
         
         {isDevelopment && (
           <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-            <p className="text-sm text-amber-200">
+            <div className="text-sm text-amber-200">
               <strong className="text-amber-400">Development Mode:</strong>
               <div className="mt-2 space-y-1">
-                <p>Registration will create a mock account.</p>
-                <p>After registering, you can log in with:</p>
+                <div>Registration will create a mock account.</div>
+                <div>After registering, you can log in with:</div>
                 <div className="flex items-center">
                   <span className="font-medium mr-2">Email:</span>
                   <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">test@example.com</code>
@@ -86,7 +86,7 @@ export default function RegisterPage() {
                   <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">password</code>
                 </div>
               </div>
-            </p>
+            </div>
           </div>
         )}
         

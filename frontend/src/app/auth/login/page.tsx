@@ -52,7 +52,7 @@ export default function LoginPage() {
         
         {isDevelopment && (
           <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-            <p className="text-sm text-amber-200">
+            <div className="text-sm text-amber-200">
               <strong className="text-amber-400">Development Mode:</strong>
               <div className="mt-2 space-y-1">
                 <div className="flex items-center">
@@ -64,7 +64,7 @@ export default function LoginPage() {
                   <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">password</code>
                 </div>
               </div>
-            </p>
+            </div>
           </div>
         )}
         
