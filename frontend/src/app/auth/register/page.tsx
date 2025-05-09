@@ -66,28 +66,25 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-mountain-blue to-white">
-      <div className="max-w-md w-full p-8 bg-white/90 backdrop-blur-sm rounded-xl shadow-xl border border-secondary-light">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary mb-2">Create an Account</h1>
-          <p className="text-secondary">Join us to start tracking your beer collection</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
+        <h1 className="text-2xl font-semibold text-center text-amber-800 mb-6">Create an Account</h1>
         
         {isDevelopment && (
-          <div className="mb-6 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-sm text-primary">
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm text-blue-800">
               <strong>Development Mode:</strong> Registration will create a mock account.
               <br />
               After registering, you can log in with:
               <br />
-              Email: <code className="bg-secondary-light px-2 py-1 rounded">test@example.com</code>
+              Email: <code className="bg-gray-100 px-1">test@example.com</code>
               <br />
-              Password: <code className="bg-secondary-light px-2 py-1 rounded">password</code>
+              Password: <code className="bg-gray-100 px-1">password</code>
             </p>
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
               Username
@@ -97,7 +94,7 @@ export default function RegisterPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
               placeholder="Choose a username"
               required
               minLength={3}
@@ -113,7 +110,7 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
               placeholder="Enter your email"
               required
             />
@@ -128,12 +125,12 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500"
               placeholder="Create a password"
               required
               minLength={6}
             />
-            <p className="mt-1 text-xs text-secondary">
+            <p className="mt-1 text-xs text-gray-500">
               Password must be at least 6 characters long
             </p>
           </div>
@@ -147,16 +144,16 @@ export default function RegisterPage() {
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors ${
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 ${
                 confirmPassword && password !== confirmPassword
-                  ? 'border-accent'
-                  : 'border-secondary'
+                  ? 'border-red-500'
+                  : 'border-gray-300'
               }`}
               placeholder="Confirm your password"
               required
             />
             {confirmPassword && password !== confirmPassword && (
-              <p className="mt-1 text-xs text-accent">
+              <p className="mt-1 text-xs text-red-500">
                 Passwords do not match
               </p>
             )}
@@ -165,24 +162,20 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading || !isFormValid()}
-            className="w-full py-3 px-4 rounded-lg text-white font-medium bg-primary hover:bg-primary-dark transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`w-full py-2 px-4 rounded-md text-white font-medium ${
+              isLoading || !isFormValid()
+                ? 'bg-amber-400 cursor-not-allowed'
+                : 'bg-amber-600 hover:bg-amber-700'
+            } transition-colors`}
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Creating Account...
-              </div>
-            ) : 'Register'}
+            {isLoading ? 'Creating Account...' : 'Register'}
           </button>
         </form>
         
-        <div className="mt-6 text-center">
+        <div className="mt-4 text-center">
           <p className="text-gray-600">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:text-primary-dark font-medium transition-colors">
+            <Link href="/auth/login" className="text-amber-600 hover:text-amber-700">
               Sign in
             </Link>
           </p>
