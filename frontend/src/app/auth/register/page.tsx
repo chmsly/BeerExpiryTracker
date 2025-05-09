@@ -68,31 +68,22 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
       <div className="max-w-md w-full p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20">
-        <h1 className="text-3xl font-bold text-center text-amber-400 mb-8">Create an Account</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-400 mb-8">Create Account</h1>
         
         {isDevelopment && (
-          <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-            <div className="text-sm text-amber-200">
-              <strong className="text-amber-400">Development Mode:</strong>
-              <div className="mt-2 space-y-1">
-                <div>Registration will create a mock account.</div>
-                <div>After registering, you can log in with:</div>
-                <div className="flex items-center">
-                  <span className="font-medium mr-2">Email:</span>
-                  <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">test@example.com</code>
-                </div>
-                <div className="flex items-center">
-                  <span className="font-medium mr-2">Password:</span>
-                  <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">password</code>
-                </div>
-              </div>
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+            <div className="text-sm text-blue-200">
+              <strong className="text-blue-400">Development Mode:</strong>
+              <p className="mt-2">
+                Registration is disabled in development mode. Please use the login page with the test credentials.
+              </p>
             </div>
           </div>
         )}
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-amber-200 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-blue-200 mb-2">
               Username
             </label>
             <input
@@ -100,15 +91,14 @@ export default function RegisterPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Choose a username"
               required
-              minLength={3}
             />
           </div>
           
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-amber-200 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-blue-200 mb-2">
               Email
             </label>
             <input
@@ -116,14 +106,14 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Enter your email"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-amber-200 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-blue-200 mb-2">
               Password
             </label>
             <input
@@ -131,47 +121,19 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Create a password"
               required
-              minLength={6}
             />
-            <p className="mt-1 text-xs text-slate-400">
-              Password must be at least 6 characters long
-            </p>
-          </div>
-          
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-amber-200 mb-2">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className={`w-full px-4 py-3 bg-slate-800/50 border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all ${
-                confirmPassword && password !== confirmPassword
-                  ? 'border-red-500'
-                  : 'border-slate-700'
-              }`}
-              placeholder="Confirm your password"
-              required
-            />
-            {confirmPassword && password !== confirmPassword && (
-              <p className="mt-1 text-xs text-red-400">
-                Passwords do not match
-              </p>
-            )}
           </div>
           
           <button
             type="submit"
-            disabled={isLoading || !isFormValid()}
+            disabled={isLoading || isDevelopment}
             className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-all duration-200 ${
-              isLoading || !isFormValid()
-                ? 'bg-amber-500/50 cursor-not-allowed'
-                : 'bg-amber-500 hover:bg-amber-600 hover:scale-[1.02] active:scale-[0.98]'
+              isLoading || isDevelopment
+                ? 'bg-blue-500/50 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
             {isLoading ? (
@@ -180,17 +142,17 @@ export default function RegisterPage() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Creating Account...
+                Creating account...
               </div>
-            ) : 'Register'}
+            ) : 'Create Account'}
           </button>
         </form>
         
         <div className="mt-6 text-center">
           <p className="text-slate-300">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-amber-400 hover:text-amber-300 font-medium transition-colors">
-              Sign in
+            <Link href="/auth/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              Login here
             </Link>
           </p>
         </div>

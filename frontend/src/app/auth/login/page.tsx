@@ -48,20 +48,20 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
       <div className="max-w-md w-full p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20">
-        <h1 className="text-3xl font-bold text-center text-amber-400 mb-8">Welcome Back</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-400 mb-8">Welcome Back</h1>
         
         {isDevelopment && (
-          <div className="mb-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-            <div className="text-sm text-amber-200">
-              <strong className="text-amber-400">Development Mode:</strong>
+          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+            <div className="text-sm text-blue-200">
+              <strong className="text-blue-400">Development Mode:</strong>
               <div className="mt-2 space-y-1">
                 <div className="flex items-center">
                   <span className="font-medium mr-2">Email:</span>
-                  <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">test@example.com</code>
+                  <code className="bg-slate-800/50 px-3 py-1 rounded text-blue-200">test@example.com</code>
                 </div>
                 <div className="flex items-center">
                   <span className="font-medium mr-2">Password:</span>
-                  <code className="bg-slate-800/50 px-3 py-1 rounded text-amber-200">password</code>
+                  <code className="bg-slate-800/50 px-3 py-1 rounded text-blue-200">password</code>
                 </div>
               </div>
             </div>
@@ -70,7 +70,7 @@ export default function LoginPage() {
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-amber-200 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-blue-200 mb-2">
               Email
             </label>
             <input
@@ -78,14 +78,14 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Enter your email"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-amber-200 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-blue-200 mb-2">
               Password
             </label>
             <input
@@ -93,7 +93,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
               placeholder="Enter your password"
               required
             />
@@ -104,8 +104,8 @@ export default function LoginPage() {
             disabled={isLoading}
             className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-all duration-200 ${
               isLoading
-                ? 'bg-amber-500/50 cursor-not-allowed'
-                : 'bg-amber-500 hover:bg-amber-600 hover:scale-[1.02] active:scale-[0.98]'
+                ? 'bg-blue-500/50 cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98]'
             }`}
           >
             {isLoading ? (
@@ -123,7 +123,7 @@ export default function LoginPage() {
         <div className="mt-6 text-center">
           <p className="text-slate-300">
             Don't have an account?{' '}
-            <Link href="/auth/register" className="text-amber-400 hover:text-amber-300 font-medium transition-colors">
+            <Link href="/auth/register" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
               Register here
             </Link>
           </p>
