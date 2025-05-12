@@ -66,14 +66,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
-      <div className="max-w-md w-full p-8 bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20">
-        <h1 className="text-3xl font-bold text-center text-blue-400 mb-8">Create Account</h1>
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+        <h1 className="text-2xl font-bold text-slate-800 mb-6 text-center">Create Account</h1>
         
         {isDevelopment && (
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-            <div className="text-sm text-blue-200">
-              <strong className="text-blue-400">Development Mode:</strong>
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-100 rounded-md">
+            <div className="text-sm text-slate-600">
+              <strong className="text-blue-600">Development Mode:</strong>
               <p className="mt-2">
                 Registration is disabled in development mode. Please use the login page with the test credentials.
               </p>
@@ -81,9 +81,9 @@ export default function RegisterPage() {
           </div>
         )}
         
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-blue-200 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-slate-700 mb-1">
               Username
             </label>
             <input
@@ -91,14 +91,14 @@ export default function RegisterPage() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
               placeholder="Choose a username"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-blue-200 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
               Email
             </label>
             <input
@@ -106,14 +106,14 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
               placeholder="Enter your email"
               required
             />
           </div>
           
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-blue-200 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
               Password
             </label>
             <input
@@ -121,7 +121,7 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all"
+              className="w-full px-3 py-2 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-900 placeholder-slate-400"
               placeholder="Create a password"
               required
             />
@@ -130,10 +130,10 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={isLoading || isDevelopment}
-            className={`w-full py-3 px-4 rounded-xl text-white font-medium transition-all duration-200 ${
+            className={`w-full py-2 px-4 rounded-md text-white font-medium transition-colors ${
               isLoading || isDevelopment
-                ? 'bg-blue-500/50 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600 hover:scale-[1.02] active:scale-[0.98]'
+                ? 'bg-blue-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700'
             }`}
           >
             {isLoading ? (
@@ -149,9 +149,9 @@ export default function RegisterPage() {
         </form>
         
         <div className="mt-6 text-center">
-          <p className="text-slate-300">
+          <p className="text-slate-600">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+            <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
               Login here
             </Link>
           </p>
